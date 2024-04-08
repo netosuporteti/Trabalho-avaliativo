@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Sala</title>
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Bootstrap Icons -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+     <link href="index.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Botão do hamburguer -->
+            <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Conteúdo do navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                </ul>
+            </div>
+        </div>
+</nav>
+
+<!-- Menu lateral -->
+<div class="sidebar" id="sidebar">
+    <button class="close-menu-btn" id="closeMenuBtn"><i class="bi bi-x-lg"></i></button>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="index.html">Página Inicial</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="agendamento.html">Página de Agendamento</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cadastrarSalaModal">Cadastrar Nova Sala</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="gerenciarSalas.html">Gerenciar Salas</a>
+        </li>
+    </ul>
+</div>
+<div class="container">
+    <h1>Agendar Sala</h1>
+    <form id="formAgendarSala">
+        <div class="mb-3">
+            <label for="nomeSala" class="form-label">Nome da Sala</label>
+            <select class="form-select" id="nomeSala" name="nomeSala"></select>
+        </div>
+        <div class="mb-3">
+            <label for="data" class="form-label">Data do Agendamento</label>
+            <input type="date" class="form-control" id="data" name="data">
+        </div>
+        
+        <div class="mb-3">
+            <label for="nomeOrganizador" class="form-label">Nome do Organizador</label>
+            <input type="text" class="form-control" id="nomeOrganizador" name="nomeOrganizador">
+        </div>
+        <div class="mb-3">
+            <label for="assuntoReuniao" class="form-label">Assunto da Reunião</label>
+            <input type="text" class="form-control" id="assuntoReuniao" name="assuntoReuniao">
+        </div>
+        <div class="mb-3">
+            <label for="numeroParticipantes" class="form-label">Número de Participantes</label>
+            <input type="number" class="form-control" id="numeroParticipantes" name="numeroParticipantes">
+        </div>
+        <div class="mb-3">
+            <label for="horario" class="form-label">Horário do Agendamento</label>
+            <input type="time" class="form-control" id="horario" name="horario">
+        </div>
+        <button type="submit" class="btn btn-primary">Agendar</button>
+    </form>
+</div>
+<!-- Bootstrap JavaScript (Bundle incluindo Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- FullCalendar JavaScript -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js'></script>
+<!-- jQuery, necessário para Bootstrap -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Seu JavaScript personalizado -->
+<script src="index.js"></script><script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selectSalas = document.getElementById("nomeSala");
+
+    // Faz a requisição AJAX para buscar os nomes das salas
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "selecionaSala.php", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    // Verifique se a resposta contém o campo "error"
+                    if (response.error) {
+                        console.error("Erro ao buscar salas:", response.error);
+                    } else {
+                        // Itera pelos dados e cria as opções da lista suspensa
+                        response.forEach(sala => {
+                            const option = document.createElement("option");
+                            option.value = sala.nome;
+                            option.textContent = sala.nome; // Nome da sala
+                            selectSalas.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Erro ao analisar resposta JSON:", error);
+                }
+            } else {
+                console.error("Erro ao buscar salas:", xhr.status);
+            }
+
+            // Adiciona o evento de envio ao formulário "formAgendarSala" apenas após obter os nomes das salas
+            const formAgendarSala = document.getElementById("formAgendarSala");
+            formAgendarSala.addEventListener("submit", function(event) {
+                event.preventDefault(); // Impede o envio padrão do formulário
+
+                // Obtém os valores dos campos do formulário
+                const nomeSala = selectSalas.value;
+                const data = document.getElementById("data").value;
+                const horario = document.getElementById("horario").value;
+                const nomeOrganizador = document.getElementById("nomeOrganizador").value;
+                const assuntoReuniao = document.getElementById("assuntoReuniao").value;
+                const numeroParticipantes = document.getElementById("numeroParticipantes").value;
+
+              
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "verificarAgendamento.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onload = function () {
+                    if (xhr.status == 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            // Exibe a mensagem de erro
+                            alert(response.error);
+                        } else {
+                            // Prossiga com o envio do formulário
+                            enviarFormulario(nomeSala, data, horario, nomeOrganizador, assuntoReuniao, numeroParticipantes);
+                        }
+                    } else {
+                        console.error("Erro ao verificar agendamento:", xhr.status);
+                    }
+                };
+                xhr.send("nomeSala=" + encodeURIComponent(nomeSala) +
+                          "&data=" + encodeURIComponent(data) +
+                          "&horario=" + encodeURIComponent(horario));
+            });
+        }
+    };
+    xhr.send();
+});
+
+function enviarFormulario(nomeSala, data, horario, nomeOrganizador, assuntoReuniao, numeroParticipantes) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "agendarSala.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onload = function () {
+        if (xhr.status == 200) {
+            alert(xhr.responseText);   } else {
+            console.error("Erro ao agendar sala:", xhr.status);
+        }
+    };
+    xhr.send("nomeSala=" + encodeURIComponent(nomeSala) +
+              "&data=" + encodeURIComponent(data) +
+              "&horario=" + encodeURIComponent(horario) +
+              "&nomeOrganizador=" + encodeURIComponent(nomeOrganizador) +
+              "&assuntoReuniao=" + encodeURIComponent(assuntoReuniao) +
+              "&numeroParticipantes=" + encodeURIComponent(numeroParticipantes));
+}
+</script>
+</body>
+</html>

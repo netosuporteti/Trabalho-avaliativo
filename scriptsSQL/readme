@@ -1,0 +1,35 @@
+# Sistema de Agendamento de Salas de Reuniões
+
+Este é um sistema web para agendar salas de reuniões. Ele permite que os usuários visualizem a disponibilidade das salas, façam agendamentos e cadastrem novas salas.
+
+## Funcionalidades
+
+- **Visualização de Salas**: Os usuários podem visualizar as salas disponíveis e suas respectivas informações, como nome, capacidade e recursos disponíveis.
+
+- **Agendamento de Salas**: Os usuários podem agendar uma sala de reunião selecionando a sala desejada, a data, o horário, o nome do organizador, o assunto da reunião e o número de participantes.
+
+- **Verificação de Disponibilidade**: Antes de confirmar o agendamento, o sistema verifica se a sala selecionada está disponível para o horário escolhido. Se a sala já estiver agendada para o horário selecionado, o usuário será notificado e o agendamento não será concluído.
+
+- **Cadastro de Novas Salas**: Os usuários com permissões adequadas podem cadastrar novas salas de reuniões, incluindo nome, capacidade e recursos disponíveis.
+
+## Diagrama Entidade-Relacionamento (DER)
+
+Abaixo está o diagrama entidade-relacionamento (DER) do banco de dados utilizado pelo sistema:
+
+![DER do Banco de Dados](DER.png)
+
+## Tecnologias Utilizadas
+
+- HTML5
+- CSS3
+- JavaScript
+- PHP
+- MySQL
+
+## Como Executar o Projeto
+
+1. Clone este repositório para o seu ambiente de desenvolvimento.
+2. Importe o arquivo `banco_de_dados.sql` para o seu sistema de gerenciamento de banco de dados MySQL.
+3. Configure a conexão com o banco de dados no arquivo PHP conforme necessário.
+4. Execute o projeto em um servidor web compatível.
+
